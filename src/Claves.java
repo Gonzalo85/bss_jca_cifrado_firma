@@ -26,8 +26,8 @@ public class Claves {
 
 	private PrivateKey pkr; // clave privada
 
-	public Claves(String algorithm) {
-		this.algorithm = algorithm;
+	public Claves() {
+		Claves.algorithm = "RSA";
 		kpg = null;
 		claves = null;
 		pku = null;
@@ -35,9 +35,6 @@ public class Claves {
 
 	}
 
-	public Claves() {
-		// TODO Auto-generated constructor stub
-	}
 
 	/**
 	 * Método para generar el par de claves, pública y privada.
@@ -51,6 +48,7 @@ public class Claves {
 		kpg = KeyPairGenerator.getInstance(Claves.algorithm);// obtenemos instancia del generador de claves
 		kpg.initialize(tam);// iniciamos el generador con el tamaño
 		claves = kpg.generateKeyPair();// generamos el par de claves
+		System.out.println("Par de claves generadas");
 
 		pku = claves.getPublic();// guardamos la pública
 		pkr = claves.getPrivate();// guardamos la privada
@@ -77,8 +75,13 @@ public class Claves {
 	 * Método para mostrar las claves por pantalla al usuario
 	 * 
 	 * @return nada
+	 * @throws IOException 
+	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchAlgorithmException 
 	 */
-	public void mostrarClaves() {
+	public void mostrarClaves() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+		pku = cargarClavePublica("publicKey.key");
+		pkr = cargarClavePrivada("privateKey.key");
 		System.out.println("Clave pública: " + pku);
 		System.out.println("Clave privada: " + pkr);
 
@@ -130,11 +133,13 @@ public class Claves {
 		return key;
 	}
 
-	public PublicKey getPku() {
+	public PublicKey getPku() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+		pku = cargarClavePublica("publicKey.key");
 		return pku;
 	}
 
-	public PrivateKey getPkr() {
+	public PrivateKey getPkr() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+		pkr = cargarClavePrivada("privateKey.key");
 		return pkr;
 	}
 

@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.security.*;
+import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -11,11 +12,17 @@ import javax.crypto.NoSuchPaddingException;
 
 public class Cifrar {
 	
-	public static final int blockSize = 53;
+	public static final int blockSizeCiph = 53;
 	
-	public static final byte[] arrayBytes = new byte[blockSize];
+	public static final int blockSizeDc = 64;
+
+	public static final byte[] arrayBytesCiph = new byte[blockSizeCiph];
+	
+	public static final byte[] arrayBytesDc = new byte[blockSizeDc];
 	
 	private Cipher c;
+	
+	private Cipher dc;
 	
 	/* Salt: conjunto de bytes aleatorios */
 	private byte[] salt;
@@ -37,9 +44,24 @@ public class Cifrar {
 		return salt;
 	}
 
+	/**
+	 * Metodo de cifrado del fichero, recibe por parámetros el fichero, el algoritmo a usar, que
+	 * en este caso es siempre el algoritmo de clave pública RSA/ECB/PKCS1Padding y la clave publica
+	 * que se usara para el cifrado
+	 * 
+	 * @param String fichero con el nombre del fichero a cifrar
+	 * @param String alCifrado con el algoritmo de cifrado seleccionado
+	 * @param PublicKey k clave publica usada para cifrar
+	 * 
+	 * @return boolean cifrado, se pone a true al terminar el cifrado
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
+	 * @throws InvalidKeySpecException 
+	 */
 	public boolean cifrado(String fichero, String algCifrado, PublicKey k) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IOException, IllegalBlockSizeException, BadPaddingException {
 		boolean cifrado = false;
-		String alg2 = "";
+		String alg2 = Options.authenticationAlgorithms[0];
 		salt = generateRandomSalt(8);
 		
 		System.out.println("Proceso de cifrado de <" + fichero + "> con Algoritmo: " + algCifrado + "\n");
@@ -58,12 +80,12 @@ public class Cifrar {
 		header.save(fos);//guardamos en cabecera
 		
 		byte [] byteCifrado;
-		int i = fis.read(arrayBytes);
+		int i = fis.read(arrayBytesCiph);
 		//bucle de escritura
-		while(i > 0) {
-			byteCifrado = c.doFinal(arrayBytes, 0 ,i);
+		while(i >= 0) {
+			byteCifrado = c.doFinal(arrayBytesCiph, 0 ,i);
 			fos.write(byteCifrado);
-			i = fis.read(arrayBytes);
+			i = fis.read(arrayBytesCiph);
 		}
 		//cierre de flujos
 		fos.close();
@@ -81,6 +103,19 @@ public class Cifrar {
 		return cifrado;
 	}
 
+	/**
+	 * Metodo para descifrar fichero con clave privada que previamente ha sido
+	 * cifrado con clave publica, recibe por parámetros el fichero y la clave privada 
+	 * que se usara para el descifrado
+	 * 
+	 * @param String fichero nombre del fichero a descifrar
+	 * @param PrivateKey k clave privada a usar para descifrar
+	 * @return boolean descifrado, se pone a true al terminar el descifrado
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
+	 * @throws InvalidKeySpecException 
+	 */
 	public boolean descifrado(String fichero, PrivateKey k) throws FileNotFoundException, InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
 		boolean descifrado = false;
 		String alg = "";
@@ -93,26 +128,27 @@ public class Cifrar {
 		Header header = new Header();
 		header.load(fis);//leemos la cabecera para obtener el algoritmo usado, ya que se necesita para descifrar
 		
-		System.out.println("El fichero se encuentra cifrado con el algoritmo "
+		System.out.println("El fichero se encuentra cifrado con el algoritmo de clave pública"
 				+header.getAlgorithm1()+", obtenido de la cabecera");//mostramos algoritmo obtenido de cabecera para comprobar
 		
 		alg = header.getAlgorithm1();//obtenemos el algoritmo
 		
-		c = Cipher.getInstance(alg);//iniciamos desencriptado con el algoritmo leido de la cabecera
-		c.init(Cipher.DECRYPT_MODE, k);
+		dc = Cipher.getInstance(alg);//iniciamos desencriptado con el algoritmo leido de la cabecera
+		dc.init(Cipher.DECRYPT_MODE, k);
 
 		byte[] byteDescifrado;
 		
 		//bucle de descifrado
-		int i = fis.read(arrayBytes);
-		while(i>0) {
-			byteDescifrado = c.doFinal(arrayBytes,0,i);
+		int i = fis.read(arrayBytesDc);
+		while(i>=0) {
+			byteDescifrado = dc.doFinal(arrayBytesDc,0,i);
 			fos.write(byteDescifrado);
-			i = fis.read(arrayBytes);
+			i = fis.read(arrayBytesDc);
 		}
 		//cierre de flujos
 		fos.close();
 		fis.close();
+		descifrado=true;
 		
 		}catch (IOException localIOException) {
 			System.out.println("\n[x] Proceso de descifrado incompleto: ");

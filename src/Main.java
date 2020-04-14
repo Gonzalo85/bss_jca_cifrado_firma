@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
 
 import javax.crypto.BadPaddingException;
@@ -72,12 +73,16 @@ public class Main {
 					break;
 				case 3: // firmar fichero
 					firmarFichero();
+					procesoPrincipal();
 				case 4: // validar firma fichero
 					validarFirma();
+					procesoPrincipal();
 				case 5:// cifrarFichero
 					cifrarFichero();
+					procesoPrincipal();
 				case 6:// descifrar fichero
 					descifrarFichero();
+					procesoPrincipal();
 				default:
 					System.out.println("Opcion incorrecta, vuelva a introducir otro valor (0-2)\n");
 					break;
@@ -106,22 +111,13 @@ public class Main {
 		claves.generarParDeClaves();
 	}
 
-	private void firmarFichero() {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void validarFirma() {
-
-	}
-
-	private void cifrarFichero() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException {
+	private void firmarFichero() throws NoSuchAlgorithmException, InvalidKeySpecException {
 		String fichero = "";
-		String algCifrado = "";
+		String algFirmado = "";
 		boolean enc = false;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
-			System.out.println("Introduzca el nombre del fichero que desea cifrar con la extension");
+			System.out.println("Introduzca el nombre del fichero que desea firmar");
 			System.out.print("Fichero: ");
 			while (!enc) {
 				fichero = br.readLine();
@@ -133,9 +129,105 @@ public class Main {
 				}
 			}
 
-			algCifrado = menuAlgoritmoCifrado();
+			algFirmado = menuAlgFirmado();
+			System.out.println("Se va a firmar el fichero con el algoritmo de firmado "+ algFirmado);
+			if (Firmar.firmado(fichero,algFirmado,claves.getPkr())) {
+				System.out.println("-- Firmado completado satisfactoriamente --\n"
+						+ "Puede encontrarlo como " + fichero + ".sign");
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private String menuAlgFirmado() {
+		String algFirmado = "";
+	
+		System.out.println("Seleccione un algoritmo firmado: ");
+		System.out.println("1. SHA1withRSA");
+		System.out.println("2. MD2withRSA");
+		System.out.println("3. MD5withRSA");
+		// entrada por teclado del usuario
+		int entrada = opcion.nextInt();
+		switch (entrada) {
+		case 1:
+			algFirmado = Options.signAlgorithms[entrada - 1];
+			break;
+		case 2:
+			algFirmado = Options.signAlgorithms[entrada - 1];
+			break;
+		case 3:
+			algFirmado = Options.signAlgorithms[entrada - 1];
+			break;
+		default:
+			System.out.println("ERROR en la seleccion del algoritmo de firmado...");
+			System.out.println("Opcion seleccionada: " + entrada + "\n");
+			break;
+		}
+		System.out.println("Algoritmo seleccionado: " + Options.signAlgorithms[entrada - 1]);
+		return algFirmado;
+	}
+		
+	
+
+	private void validarFirma() {
+		String fichero = "";
+		boolean enc = false;
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			System.out.println("Introduzca el nombre del fichero para el cual desea verificar la firma");
+			System.out.print("Fichero: ");
+			while (!enc) {
+				fichero = br.readLine();
+				if (Files.exists(Paths.get(fichero))) {
+					enc = true;
+				} else {
+					System.err.println("ERROR! fichero no encontrado");
+					System.out.println("Introduzca el nombre de nuevo, asegúrese que está en el mismo directorio");
+				}
+			}
+			//Firma.verificar(fichero....);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Metodo que llama al cifrado pidiendo al usuario por pantalla el nombre del
+	 * fichero a cifrar Una vez cifrado mostrará al usuario por pantalla una
+	 * confirmación
+	 * 
+	 * @return 0
+	 * @throws NoSuchPaddingException 
+	 * @throws NoSuchAlgorithmException 
+	 * @throws InvalidKeyException 
+	 * @throws InvalidKeySpecException 
+	 */
+	private void cifrarFichero() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
+		String fichero = "";
+		String algCifrado = "";
+		boolean enc = false;
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		try {
+			System.out.println("Introduzca el nombre del fichero que desea cifrar con RSA/ECB/PKCS1Padding con la extensión");
+			System.out.print("Fichero: ");
+			while (!enc) {
+				fichero = br.readLine();
+				if (Files.exists(Paths.get(fichero))) {
+					enc = true;
+				} else {
+					System.err.println("ERROR! fichero no encontrado");
+					System.out.println("Introduzca el nombre de nuevo, asegúrese que está en el mismo directorio");
+				}
+			}
+
+			System.out.println("Se va a cifrar el fichero con el algoritmo de clave pública RSA/ECB/PKCS1Padding");
+			algCifrado = Options.publicAlgorithms[0];
 			if (cifrar.cifrado(fichero, algCifrado , claves.getPku())) {
-				System.out.println("-- Cifrado completado satisfactoriamente.\n"
+				System.out.println("-- Cifrado completado satisfactoriamente --\n"
 						+ "Puede encontrarlo como " + fichero + ".cif");
 			}
 		} catch (IOException e) {
@@ -143,40 +235,6 @@ public class Main {
 			e.printStackTrace();
 		}
 
-	}
-	/**
-	 * Método para mostrar las opciones de algoritmos de cifrado
-	 * 
-	 * @return 0
-	 */
-	private String menuAlgoritmoCifrado() {
-		String algCifrado="";
-		System.out.println("======================================================");
-		System.out.println("Seleccione un algoritmo de cifrado de clave pública:");
-		System.out.println("1. RSA");
-		System.out.println("2. ECB");
-		System.out.println("3. PCS1Padding");
-		System.out.println("======================================================");
-		
-		int entrada = opcion.nextInt();
-		switch (entrada) {
-		case 1:
-			algCifrado = Options.publicAlgorithms[entrada - 1];
-			break;
-		case 2:
-			algCifrado = Options.publicAlgorithms[entrada - 1];
-			break;
-		case 3:
-			algCifrado = Options.publicAlgorithms[entrada - 1];
-			break;
-		default:
-			System.out.println("ERROR en la seleccion del algoritmo de cifrado...");
-			System.out.println("Opcion seleccionada: " + entrada + "\n");
-			break;
-		}
-		System.out.println("Algoritmo seleccionado: " + Options.publicAlgorithms[entrada - 1]);
-		
-		return algCifrado;
 	}
 	
 	/**
@@ -188,8 +246,9 @@ public class Main {
 	 * @throws NoSuchPaddingException 
 	 * @throws NoSuchAlgorithmException 
 	 * @throws InvalidKeyException 
+	 * @throws InvalidKeySpecException 
 	 */
-	public void descifrarFichero() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
+	public void descifrarFichero() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
 		String fichero = "";
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Introduzca el nombre del fichero que desea descifrar con la extension");
@@ -198,7 +257,7 @@ public class Main {
 			fichero = br.readLine();
 		
 			if (cifrar.descifrado(fichero, claves.getPkr())) {
-				System.out.println("-- Fichero descifrado satisfactoriamente."+"\n"
+				System.out.println("-- Fichero descifrado satisfactoriamente --"+"\n"
 						+ "Puede encontrarlo como " + fichero
 						+ ".cla, si desea revisarlo en el explorador del S.O."
 						+ " puede cambiar la extension a .txt ");
