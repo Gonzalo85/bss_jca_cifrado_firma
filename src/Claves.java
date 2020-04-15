@@ -122,13 +122,13 @@ public class Claves {
 			throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 		PrivateKey key;
 		FileInputStream fis = new FileInputStream(fichero);
-		int numbytes = fis.available();// obtenemos bytes totales
+		int numbytes = fis.available();						// obtenemos bytes totales
 		byte[] bytes = new byte[numbytes];
 		fis.read(bytes);
 		fis.close();
 
 		KeyFactory kf = KeyFactory.getInstance(Claves.algorithm);
-		KeySpec keySpec = new PKCS8EncodedKeySpec(bytes); // clave privada protegida
+		KeySpec keySpec = new PKCS8EncodedKeySpec(bytes); 	// clave privada protegida
 		key = kf.generatePrivate(keySpec);
 		return key;
 	}
@@ -141,6 +141,22 @@ public class Claves {
 	public PrivateKey getPkr() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		pkr = cargarClavePrivada("privateKey.key");
 		return pkr;
+	}
+	
+	public KeyPair cargarKeyPair() {
+		try {
+			return new KeyPair(getPku(),getPkr());
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvalidKeySpecException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

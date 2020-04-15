@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SignatureException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Scanner;
 
@@ -106,12 +107,12 @@ public class Main {
 	 */
 	public void generarParDeClaves() throws NoSuchAlgorithmException, IOException {
 		System.out.println(
-				"Se va a generar el par de claves con RSA, la clave privada sera el archivo privateKey.key y la privada privateKey.key");
+				"Se va a generar el par de claves con RSA, la clave privada sera el archivo privateKey.key \ny la publica publicKey.key");
 		System.out.println("Estarán guardadas en el directorio principal del programa.");
 		claves.generarParDeClaves();
 	}
 
-	private void firmarFichero() throws NoSuchAlgorithmException, InvalidKeySpecException {
+	private void firmarFichero() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
 		String fichero = "";
 		String algFirmado = "";
 		boolean enc = false;
@@ -130,10 +131,10 @@ public class Main {
 			}
 
 			algFirmado = menuAlgFirmado();
-			System.out.println("Se va a firmar el fichero con el algoritmo de firmado "+ algFirmado);
-			if (Firmar.firmado(fichero,algFirmado,claves.getPkr())) {
-				System.out.println("-- Firmado completado satisfactoriamente --\n"
-						+ "Puede encontrarlo como " + fichero + ".sign");
+			System.out.println("Se va a firmar el fichero con el algoritmo de firmado " + algFirmado);
+			if (Firmar.firmado(fichero, algFirmado, claves.getPkr())) {
+				System.out.println("-- Firmado completado satisfactoriamente --\n" + "Puede encontrarlo como " + fichero
+						+ ".sign");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -143,7 +144,7 @@ public class Main {
 
 	private String menuAlgFirmado() {
 		String algFirmado = "";
-	
+
 		System.out.println("Seleccione un algoritmo firmado: ");
 		System.out.println("1. SHA1withRSA");
 		System.out.println("2. MD2withRSA");
@@ -168,10 +169,9 @@ public class Main {
 		System.out.println("Algoritmo seleccionado: " + Options.signAlgorithms[entrada - 1]);
 		return algFirmado;
 	}
-		
-	
 
-	private void validarFirma() {
+	private void validarFirma()
+			throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, SignatureException {
 		String fichero = "";
 		boolean enc = false;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -187,8 +187,11 @@ public class Main {
 					System.out.println("Introduzca el nombre de nuevo, asegúrese que está en el mismo directorio");
 				}
 			}
-			//Firma.verificar(fichero....);
-			
+			if (firmar.verificarFirma(fichero, claves) == true) {
+				System.out.println("Firma verificada satisfactoriamente\n");
+			} else
+				System.out.println("Error en la verificacion del fichero seleccionado.\n");
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -201,18 +204,20 @@ public class Main {
 	 * confirmación
 	 * 
 	 * @return 0
-	 * @throws NoSuchPaddingException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchPaddingException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeyException
+	 * @throws InvalidKeySpecException
 	 */
-	private void cifrarFichero() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
+	private void cifrarFichero() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException,
+			IllegalBlockSizeException, BadPaddingException, InvalidKeySpecException {
 		String fichero = "";
 		String algCifrado = "";
 		boolean enc = false;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
-			System.out.println("Introduzca el nombre del fichero que desea cifrar con RSA/ECB/PKCS1Padding con la extensión");
+			System.out.println(
+					"Introduzca el nombre del fichero que desea cifrar con RSA/ECB/PKCS1Padding con la extensión");
 			System.out.print("Fichero: ");
 			while (!enc) {
 				fichero = br.readLine();
@@ -226,9 +231,9 @@ public class Main {
 
 			System.out.println("Se va a cifrar el fichero con el algoritmo de clave pública RSA/ECB/PKCS1Padding");
 			algCifrado = Options.publicAlgorithms[0];
-			if (cifrar.cifrado(fichero, algCifrado , claves.getPku())) {
-				System.out.println("-- Cifrado completado satisfactoriamente --\n"
-						+ "Puede encontrarlo como " + fichero + ".cif");
+			if (cifrar.cifrado(fichero, algCifrado, claves.getPku())) {
+				System.out.println(
+						"-- Cifrado completado satisfactoriamente --\n" + "Puede encontrarlo como " + fichero + ".cif");
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -236,30 +241,30 @@ public class Main {
 		}
 
 	}
-	
+
 	/**
 	 * Metodo que llama al descifrado pidiendo al usuario por pantalla el nombre del
 	 * fichero a descifrar Una vez descifrado mostrará al usuario por pantalla una
 	 * confirmación
 	 * 
 	 * @return 0
-	 * @throws NoSuchPaddingException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws InvalidKeySpecException 
+	 * @throws NoSuchPaddingException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeyException
+	 * @throws InvalidKeySpecException
 	 */
-	public void descifrarFichero() throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
+	public void descifrarFichero()
+			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
 		String fichero = "";
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		System.out.println("Introduzca el nombre del fichero que desea descifrar con la extension");
 		System.out.println("Fichero: ");
 		try {
 			fichero = br.readLine();
-		
+
 			if (cifrar.descifrado(fichero, claves.getPkr())) {
-				System.out.println("-- Fichero descifrado satisfactoriamente --"+"\n"
-						+ "Puede encontrarlo como " + fichero
-						+ ".cla, si desea revisarlo en el explorador del S.O."
+				System.out.println("-- Fichero descifrado satisfactoriamente --" + "\n" + "Puede encontrarlo como "
+						+ fichero + ".cla, si desea revisarlo en el explorador del S.O."
 						+ " puede cambiar la extension a .txt ");
 			}
 		} catch (IOException e) {
