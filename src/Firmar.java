@@ -41,7 +41,7 @@ public class Firmar {
 		FileInputStream fis = new FileInputStream(fichero);
 		BufferedInputStream bis = new BufferedInputStream(fis);
 
-		byte[] buffer = new byte[8];
+		byte[] buffer = { 0x00 };
 
 		// leemos fichero y firmamos
 		int i;

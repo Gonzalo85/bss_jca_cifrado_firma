@@ -97,7 +97,7 @@ public class Main {
 	}
 
 	/**
-	 * que llama al generar claves de la clase Claves, están con nombre fijos, pero
+	 * metodo que llama al generar claves de la clase Claves, están con nombre fijos, pero
 	 * se podrían pedir nombres de ficheros por pantalla al usuario y llamarlo con
 	 * esos nombres
 	 * 
@@ -112,6 +112,15 @@ public class Main {
 		claves.generarParDeClaves();
 	}
 
+	/**
+	 * metodo que llama al firmar fichero de la clase Firmar
+	 * 
+	 * @return nada
+	 * @trhows NoSuchAlgorithmException
+	 * @trhows InvalidKeySpecException 
+	 * @trhows InvalidKeyException 
+	 * @trhows SignatureException
+	 */
 	private void firmarFichero() throws NoSuchAlgorithmException, InvalidKeySpecException, InvalidKeyException, SignatureException {
 		String fichero = "";
 		String algFirmado = "";
@@ -141,7 +150,12 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * menu para elegir el algoritmo de firmado
+	 * 
+	 * @return nada
+	 */
 	private String menuAlgFirmado() {
 		String algFirmado = "";
 
@@ -170,6 +184,15 @@ public class Main {
 		return algFirmado;
 	}
 
+	/**
+	 * metodo que llama al metodo verificar
+	 * 
+	 * @return nada
+	 * @trhows NoSuchAlgorithmException
+	 * @trhows InvalidKeySpecException 
+	 * @trhows InvalidKeyException 
+	 * @trhows SignatureException
+	 */
 	private void validarFirma()
 			throws InvalidKeyException, NoSuchAlgorithmException, InvalidKeySpecException, SignatureException {
 		String fichero = "";
@@ -177,6 +200,7 @@ public class Main {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		try {
 			System.out.println("Introduzca el nombre del fichero para el cual desea verificar la firma");
+			System.out.println("Debe tener la extension.sign para poder ser verificado");
 			System.out.print("Fichero: ");
 			while (!enc) {
 				fichero = br.readLine();
@@ -189,6 +213,7 @@ public class Main {
 			}
 			if (firmar.verificarFirma(fichero, claves) == true) {
 				System.out.println("Firma verificada satisfactoriamente\n");
+				System.out.println("El fichero original está disponible en el explorador con la extension .verificado");
 			} else
 				System.out.println("Error en la verificacion del fichero seleccionado.\n");
 
