@@ -113,6 +113,7 @@ public class Firmar {
 			int i;
 			while ((i = bis.read(buffer)) > 0) { // Procesar información a firmar:
 				firma.update(buffer);
+				fos.write(buffer);
 			}
 
 			bis.close();
