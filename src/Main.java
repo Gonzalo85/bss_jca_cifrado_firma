@@ -282,7 +282,7 @@ public class Main {
 			throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeySpecException {
 		String fichero = "";
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		System.out.println("Introduzca el nombre del fichero que desea descifrar con la extension");
+		System.out.println("Introduzca el nombre del fichero que desea descifrar, debe tener la extension .cif");
 		System.out.println("Fichero: ");
 		try {
 			fichero = br.readLine();

@@ -28,7 +28,7 @@ public class Cifrar {
 	private byte[] salt;
 
 	/**
-	 * Generador de datos aleatorios
+	 * Generador de datos aleatorios para cabecera
 	 * 
 	 * @param size tamano de la estructura
 	 * @return estructura de datos aleatorios tipo byte []

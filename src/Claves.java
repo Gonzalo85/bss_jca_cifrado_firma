@@ -132,12 +132,28 @@ public class Claves {
 		key = kf.generatePrivate(keySpec);
 		return key;
 	}
+	/**
+	 * get de clave publica
+	 * 
+	 * @return PublicKey pku
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 */
 
 	public PublicKey getPku() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		pku = cargarClavePublica("publicKey.key");
 		return pku;
 	}
 
+	/**
+	 * get de clave privada
+	 * 
+	 * @return PrivateKey pkr
+	 * @throws IOException
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeySpecException
+	 */
 	public PrivateKey getPkr() throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
 		pkr = cargarClavePrivada("privateKey.key");
 		return pkr;
@@ -147,13 +163,10 @@ public class Claves {
 		try {
 			return new KeyPair(getPku(),getPkr());
 		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvalidKeySpecException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;

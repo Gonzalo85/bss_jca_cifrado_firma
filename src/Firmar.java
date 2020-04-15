@@ -19,13 +19,12 @@ public class Firmar {
 
 	public Firmar(String algorithm) {
 		this.algorithm = algorithm;
-		this.sig = null;
+		Firmar.sig = null;
 	}
 
 	public Firmar() {
-		// TODO Auto-generated constructor stub
 		this.algorithm = "";
-		this.sig = null;
+		Firmar.sig = null;
 	}
 	/**
 	 * Metodo encargado de realizar el proceso de firmado de un fichero
