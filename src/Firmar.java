@@ -27,7 +27,19 @@ public class Firmar {
 		this.algorithm = "";
 		this.sig = null;
 	}
-
+	/**
+	 * Metodo encargado de realizar el proceso de firmado de un fichero
+	 * 
+	 * @param fichero Parametro tipo String, referencia al fichero
+	 * @param k       referencia de un objeto Claves
+	 * @param String algFirmado algoritmo de firmado elegido por el usuario
+	 * @return Retorna verdadero si la firma se ha realizado correctamente
+	 * @throws NoSuchAlgorithmException
+	 * @throws InvalidKeyException
+	 * @throws InvalidKeySpecException
+	 * @throws IOException
+	 * @throws SignatureException
+	 */
 	public static boolean firmado(String fichero, String algFirmado, PrivateKey k) throws NoSuchAlgorithmException, InvalidKeyException, SignatureException, IOException {
 		boolean firmado = false;
 		String alg1 = Options.cipherAlgorithms[0];
