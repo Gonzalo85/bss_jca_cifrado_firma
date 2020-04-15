@@ -10,6 +10,11 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+/**
+ * Clase Cifrar, encargada de realizar las funciones de cifrado y descifrado
+ * @author Borja Alberto Tirado Galan & Gonzalo Bueno Rodriguez
+ *
+ */
 public class Cifrar {
 
 	public static final int blockSizeCiph = 53;

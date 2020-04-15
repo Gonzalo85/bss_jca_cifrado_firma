@@ -13,6 +13,12 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
+
+/**
+ * Clase principal
+ * @author Borja Alberto Tirado Galan & Gonzalo Bueno Rodriguez
+ *
+ */
 public class Main {
 	private Scanner opcion;
 	private Cifrar cifrar;
@@ -297,7 +303,12 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
+/**
+ * Metodo principal
+ * 
+ * @param args
+ * @throws IOException
+ */
 	public static void main(final String[] args) throws IOException {
 		Main main = new Main();
 		main.procesoPrincipal();

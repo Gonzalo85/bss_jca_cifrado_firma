@@ -9,6 +9,11 @@ import java.security.spec.InvalidKeySpecException;
 
 import javax.crypto.Cipher;
 
+/**
+ * Clase encargada de firmar ficheros y verificarlos
+ * @author Borja Alberto Tirado Galan & Gonzalo Bueno Rodriguez
+ *
+ */
 public class Firmar {
 
 	static Signature firma;
@@ -17,11 +22,17 @@ public class Firmar {
 
 	static byte[] sig;
 
+	/**
+	 * Constructor parametrizado
+	 * @param algorithm algoritmo de firmado
+	 */
 	public Firmar(String algorithm) {
 		this.algorithm = algorithm;
 		Firmar.sig = null;
 	}
-
+	/**
+	 * Constructor por defecto
+	 */
 	public Firmar() {
 		this.algorithm = "";
 		Firmar.sig = null;

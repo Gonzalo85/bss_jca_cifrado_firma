@@ -12,6 +12,11 @@ import java.security.spec.KeySpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+/**
+ * Clase encargada de procesar las claves (Publica y Privada)
+ * @author Borja Alberto Tirado Galan & Gonzalo Bueno Rodriguez
+ *
+ */
 public class Claves {
 
 	public static final int tam = 512; // tamaño inicial para el generador
@@ -25,7 +30,10 @@ public class Claves {
 	private PublicKey pku; // clave publica
 
 	private PrivateKey pkr; // clave privada
-
+	
+	/**
+	 * Constructor por defecto
+	 */
 	public Claves() {
 		Claves.algorithm = "RSA";
 		kpg = null;
@@ -159,6 +167,10 @@ public class Claves {
 		return pkr;
 	}
 	
+	/**
+	 * Metodo encargado de cargar la clase KeyPair, 
+	 * @return se obtiene la clave publica y la privada
+	 */
 	public KeyPair cargarKeyPair() {
 		try {
 			return new KeyPair(getPku(),getPkr());
